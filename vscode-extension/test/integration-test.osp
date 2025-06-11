@@ -1,0 +1,36 @@
+// Osprey Integration Test File
+// This file tests all the language features that should have LSP support
+
+// Basic function declarations
+fn square(x) = x * x
+
+fn add(a, b) = a + b
+
+fn double(x) = x * 2
+
+// Built-in function usage - should have hover documentation
+fn testPrint() = print("Testing")
+
+fn testRange() = range(1, 5) |> forEach(print)
+
+// Test variable declarations
+let globalVar = 42
+
+// Test pattern matching
+fn testPattern(x) = match x {
+  0 => "zero"
+  1 => "one" 
+  _ => "other"
+}
+
+// Main test function
+fn main() = print("Integration test complete!")
+
+// Test all the things that should have LSP support:
+// 1. Hover on 'print' should show documentation
+// 2. Hover on 'range' should show iterator documentation  
+// 3. Hover on '|>' should show pipe operator docs
+// 4. Signature help on function calls
+// 5. Go-to-definition on user functions
+// 6. Document symbols should show all functions
+// 7. Diagnostics should show for any errors 

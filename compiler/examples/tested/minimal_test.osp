@@ -1,0 +1,4 @@
+let x = 5
+
+print("Minimal test:")
+print("x = ${x}")

@@ -1,0 +1,48 @@
+# Source files
+client/src/**
+server/src/**
+*.ts
+tsconfig.json
+
+# Build and development files
+.vscode-test/**
+.vscode-test.js
+test/**
+scripts/**
+
+# Exclude development dependencies but keep production dependencies
+node_modules/@types/**
+node_modules/@vscode/**
+node_modules/mocha/**
+node_modules/sinon/**
+node_modules/ts-node/**
+node_modules/typescript/**
+
+# Exclude test and cache files from all node_modules
+node_modules/**/.cache
+node_modules/**/test
+node_modules/**/tests
+node_modules/**/*.test.js
+node_modules/**/*.spec.js
+node_modules/**/.*
+
+# Documentation and development files
+TESTING.md
+FEATURES.md
+build.sh
+run-tests.sh
+test-runner.js
+.nvmrc
+.gitignore
+
+# Keep only essential files
+!out/**
+!server/out/**
+!syntaxes/**
+!language-configuration/**
+!package.json
+!README.md
+!LICENSE
+!node_modules/vscode-languageclient/**
+!node_modules/vscode-languageserver/**
+!node_modules/vscode-languageserver-textdocument/** 

@@ -1,0 +1,7 @@
+// This should fail compilation: Attempting to redefine built-in function
+// Error: cannot redefine built-in function 'toString'. Built-in functions are reserved
+
+fn toString(x) = "custom implementation"
+
+let result = toString(42)
+print(result) 

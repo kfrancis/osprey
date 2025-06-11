@@ -1,0 +1,50 @@
+// 🔌 Osprey WebSocket Server Example with KeepAlive
+// Creates a WebSocket server that browsers can connect to
+
+print("=== Osprey WebSocket Server ===")
+
+// Create WebSocket server
+print("Creating WebSocket server on port 54321...")
+let serverId = websocketCreateServer(54321, "127.0.0.1", "/chat")
+print("WebSocket server created with ID: ${serverId}")
+
+// Start listening for connections
+print("Starting WebSocket server...")
+let listenResult = websocketServerListen(serverId)
+print("Listen result: ${listenResult}")
+
+// Note: -4 means bind failed (port already in use)
+// The startup script should have killed any existing processes
+
+print("🚀 WebSocket server running on ws://127.0.0.1:54321/chat")
+print("💡 You can now connect browsers to this server!")
+print("")
+print("🧪 Test with browser:")
+print("1. Open examples/websocketserver/websocket_test.html")
+print("2. Browser will connect to ws://localhost:54321/chat")
+print("3. Send messages and see real-time echo responses")
+print("")
+
+// Simulate some server activity
+print("🔄 Broadcasting welcome message to all connections...")
+let broadcastResult = websocketServerBroadcast(serverId, "{\"type\":\"server_announcement\",\"message\":\"Osprey WebSocket Server is running!\"}")
+print("Broadcast result: ${broadcastResult}")
+
+print("")
+print("🔥 SERVER IS NOW LIVE AND READY FOR BROWSER CONNECTIONS!")
+print("🌐 CONNECT YOUR BROWSER TO: ws://127.0.0.1:54321/chat")
+print("💻 Open examples/websocketserver/websocket_test.html NOW!")
+print("")
+print("🔍 WATCHING FOR CONNECTIONS AND MESSAGES...")
+print("📡 Server will broadcast welcome messages to new connections")
+print("💬 Server will echo any messages it receives")
+print("")
+print("⚡ Press Ctrl+C to stop the server when done testing")
+print("🚀 Entering live server mode...")
+print("")
+
+websocketKeepAlive()
+
+print("")
+print("✅ Server has been stopped")
+print("=== WebSocket Server Example Complete ===") 

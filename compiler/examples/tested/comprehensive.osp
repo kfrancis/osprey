@@ -1,0 +1,51 @@
+// Comprehensive Osprey Language Feature Showcase
+// This example demonstrates major language features working with current implementation
+
+// 1. Type Definitions - Simple union types  
+type Grade = A | B | C | D | F
+
+// 2. Function Definitions
+fn double(x) = x * 2
+fn add(x, y) = x + y
+
+// 3. Pattern Matching Functions
+fn gradeMessage(grade: Grade) -> string = match grade {
+    A => "Excellent!"
+    B => "Good work!"
+    C => "Satisfactory"
+    D => "Needs improvement"
+    F => "Failed"
+}
+
+// 4. String Interpolation Function
+fn formatScore(name: string, score: int) -> string = "Student ${name} scored ${score} points"
+
+// 5. Demonstrate core features
+let studentName = "Alice"
+let baseScore = 85
+let bonusPoints = 10
+
+// Named arguments for multi-parameter functions
+let totalScore = add(x: baseScore, y: bonusPoints)
+let doubledScore = double(totalScore)
+
+// String interpolation with variables and function calls
+print("=== Comprehensive Osprey Demo ===")
+print(formatScore(name: studentName, score: totalScore))
+print("Doubled score: ${doubledScore}")
+
+// Pattern matching with union types
+let currentGrade = A
+print(gradeMessage(currentGrade))
+
+// Simple string output instead of complex match
+print("Status: System operational")
+
+// Arithmetic operations
+let calculation = double(42)
+print("Double of 42: ${calculation}")
+
+// Another student with named arguments
+print(formatScore(name: "Bob", score: 92))
+
+print("=== Demo Complete ===") 

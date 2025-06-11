@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    name: Test, Format, Build & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Osprey Compiler
+        uses: ./.github/actions/setup-osprey-compiler
+
+      - name: Debug workspace structure
+        working-directory: "./compiler"
+        run: |
+          echo "🔍 Debugging workspace structure..."
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
+          echo "Contents of cmd directory:"
+          ls -la cmd/ || echo "cmd directory not found"
+          echo "Contents of cmd/osprey directory:"
+          ls -la cmd/osprey/ || echo "cmd/osprey directory not found"
+          echo "Checking if main.go exists:"
+          if [ -f "cmd/osprey/main.go" ]; then
+            echo "✅ main.go found"
+            head -5 cmd/osprey/main.go
+          else
+            echo "❌ main.go not found"
+          fi
+
+      - name: Check Go formatting
+        working-directory: "./compiler"
+        run: |
+          echo "🔍 Checking Go code formatting..."
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "❌ The following files are not properly formatted:"
+            echo "$unformatted"
+            echo "Run 'gofmt -w .' to fix formatting issues"
+            exit 1
+          fi
+          echo "✅ All Go files are properly formatted"
+
+      - name: Check Go modules are tidy
+        working-directory: "./compiler"
+        run: |
+          echo "🔍 Checking if go.mod and go.sum are tidy..."
+          go mod tidy
+          if ! git diff --exit-code go.mod go.sum; then
+            echo "❌ go.mod or go.sum are not tidy. Run 'go mod tidy' and commit the changes."
+            exit 1
+          fi
+          echo "✅ go.mod and go.sum are tidy"
+
+      - name: Run linter
+        working-directory: "./compiler"
+        run: |
+          echo "🔧 Running linter..."
+          echo "Verifying cmd/osprey directory exists..."
+          if [ ! -d "cmd/osprey" ]; then
+            echo "❌ cmd/osprey directory not found!"
+            echo "Current directory structure:"
+            find . -name "*.go" -type f | head -10
+            exit 1
+          fi
+          if [ ! -f "cmd/osprey/main.go" ]; then
+            echo "❌ cmd/osprey/main.go not found!"
+            exit 1
+          fi
+          echo "✅ Directory structure verified"
+
+      - name: Run all tests
+        working-directory: "./compiler"
+        run: |
+          echo "🚀 Running all tests..."
+          make test-all
+
+      - name: Test example compilation and execution
+        working-directory: "./compiler"
+        run: |
+          echo "🎯 Testing example compilation and execution..."
+
+          # Test arithmetic interpolation example
+          echo "Testing interpolation_math.osp..."
+          ./bin/osprey examples/tested/interpolation_math.osp --run
+
+          # Test comprehensive example
+          echo "Testing comprehensive.osp..."
+          ./bin/osprey examples/tested/comprehensive.osp --run
+
+          # Test basic hello world
+          echo "Testing hello.osp..."
+          ./bin/osprey examples/tested/hello.osp --run
+
+          echo "✅ All example compilations and executions successful!"
+
+      - name: Verify binary works
+        working-directory: "./compiler"
+        run: |
+          echo "🔍 Verifying osprey binary functionality..."
+          ./bin/osprey --help
+          echo "✅ Binary verification successful!"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: osprey-binary
+          path: "compiler/bin/osprey"
+          retention-days: 30
+
+      - name: Test Web Compiler with Docker Compose
+        run: |
+          echo "🐳 Testing Web Compiler with Docker Compose..."
+          cd webcompiler
+
+          # Build and start the web compiler service
+          echo "🔨 Building and starting web compiler..."
+          docker compose up --build -d
+
+          # Wait for service to be ready
+          echo "⏳ Waiting for web compiler to be ready..."
+          timeout=60
+          while [ $timeout -gt 0 ]; do
+            if curl -s http://localhost:3001/api > /dev/null; then
+              echo "✅ Web compiler is ready!"
+              break
+            fi
+            echo "⏳ Waiting for service... ($timeout seconds remaining)"
+            sleep 2
+            timeout=$((timeout - 2))
+          done
+
+          if [ $timeout -le 0 ]; then
+            echo "❌ Web compiler failed to start within timeout"
+            echo "📋 Docker logs:"
+            docker compose logs
+            docker compose down
+            exit 1
+          fi
+
+          # Run the test script
+          echo "🧪 Running web compiler tests..."
+          chmod +x test.sh
+          ./test.sh
+
+          # Clean up
+          echo "🧹 Cleaning up Docker containers..."
+          docker compose down
+
+          echo "✅ Web compiler tests completed successfully!"

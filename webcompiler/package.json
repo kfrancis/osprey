@@ -1,0 +1,18 @@
+{
+  "name": "osprey-web-compiler",
+  "version": "1.0.0",
+  "description": "Web-based Osprey compiler with Monaco Editor",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "./start.sh",
+    "server": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.50"
+  }
+}

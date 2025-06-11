@@ -1,0 +1,64 @@
+// Advanced real-world fiber examples
+print("=== Advanced Fiber Examples ===")
+
+// Example 1: Map-Reduce pattern for data analysis
+fn mapPhase(data: Int) -> Int = data * data  // Square each element
+fn reducePhase(acc: Int, val: Int) -> Int = acc + val
+
+let data1 = spawn mapPhase(10)
+let data2 = spawn mapPhase(20)
+let data3 = spawn mapPhase(30)
+
+print("Map-Reduce pattern:")
+let mapped1 = await(data1)
+let mapped2 = await(data2)
+let mapped3 = await(data3)
+let total = mapped1 + mapped2 + mapped3
+print("Mapped values: ${mapped1}, ${mapped2}, ${mapped3}")
+print("Reduced total: ${total}")
+
+// Example 2: Parallel file processing simulation
+fn processFile(fileSize: Int) -> Int = fileSize / 1024  // Convert to KB
+fn compressFile(size: Int) -> Int = size / 4            // 4:1 compression
+
+let file1 = spawn processFile(1048576)   // 1MB file
+let file2 = spawn processFile(2097152)   // 2MB file
+let file3 = spawn processFile(5242880)   // 5MB file
+
+print("\nParallel file processing:")
+let kb1 = await(file1)
+let kb2 = await(file2)  
+let kb3 = await(file3)
+print("File sizes in KB: ${kb1}, ${kb2}, ${kb3}")
+
+// Example 3: Concurrent API requests simulation
+fn fetchUserData(userId: Int) -> Int = userId * 1000 + 123
+fn fetchOrderData(userId: Int) -> Int = userId * 100 + 45
+
+let userData = spawn fetchUserData(5)
+let orderData = spawn fetchOrderData(5)
+
+print("\nConcurrent API calls:")
+print("User data response: ${await(userData)}")
+print("Order data response: ${await(orderData)}")
+
+// Example 4: Task scheduling with priorities
+let highPriority = yield 1
+let mediumPriority = yield 2
+let lowPriority = yield 3
+
+print("\nTask scheduling priorities:")
+print("High priority task ID: ${highPriority}")
+print("Medium priority task ID: ${mediumPriority}")
+print("Low priority task ID: ${lowPriority}")
+
+// Example 5: Pipeline processing pattern
+fn stage1(input: Int) -> Int = input + 100
+fn stage2(input: Int) -> Int = input * 2
+fn stage3(input: Int) -> Int = input - 50
+
+let pipeline = await(spawn stage3(await(spawn stage2(await(spawn stage1(25))))))
+print("\nPipeline result: ${pipeline}")
+
+print("\nTesting advanced fiber patterns...")
+print("=== Fiber Tests Complete ===") 

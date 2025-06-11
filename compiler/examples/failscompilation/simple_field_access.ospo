@@ -1,0 +1,3 @@
+let user = 42
+let result = user.name
+print("${result}") 

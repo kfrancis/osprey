@@ -1,0 +1,15 @@
+// This should fail compilation: Unknown variant in match pattern
+// Error: unknown variant 'Maybe' is not defined in type 'Color'
+
+type Color = Red | Green | Blue
+
+let color = Red
+
+let description = match color {
+    Red => "red color"
+    Green => "green color"
+    Blue => "blue color"
+    Maybe => "unknown color"  // Maybe is not a variant of Color
+}
+
+print(description) 

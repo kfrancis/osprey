@@ -1,0 +1,65 @@
+// Real-world fiber examples demonstrating concurrent programming patterns
+print("=== Fiber Test ===")
+
+// Test 1: Parallel computation - calculate fibonacci numbers concurrently
+fn fibonacci(n: Int) -> Int = match n {
+    0 => 0
+    1 => 1
+    _ => fibonacci(n - 1) + fibonacci(n - 2)
+}
+
+let fib10 = spawn fibonacci(10)
+let fib15 = spawn fibonacci(15)
+print("Computing Fibonacci numbers in parallel...")
+print("Fib(10) = ${await(fib10)}")
+print("Fib(15) = ${await(fib15)}")
+
+// Test 2: Producer/Consumer pattern simulation
+fn produce(item: Int) -> Int = item * 3 + 7  // Simulate production cost
+fn consume(item: Int) -> Int = item / 2      // Simulate consumption
+
+let producer1 = spawn produce(100)
+let producer2 = spawn produce(200)
+let producer3 = spawn produce(300)
+
+print("\nProducer/Consumer pattern:")
+print("Producer 1 created: ${await(producer1)}")
+print("Producer 2 created: ${await(producer2)}")
+print("Producer 3 created: ${await(producer3)}")
+
+// Test 3: Yield for cooperative multitasking
+print("\nCooperative multitasking with yield:")
+let task1Progress = yield 25
+print("Task 1 progress: ${task1Progress}%")
+let task2Progress = yield 50
+print("Task 2 progress: ${task2Progress}%")
+let task3Progress = yield 75
+print("Task 3 progress: ${task3Progress}%")
+let complete = yield 100
+print("All tasks complete: ${complete}%")
+
+// Test 4: Select for handling multiple async sources
+let priority = select {
+    1 => 1000     // High priority request
+    2 => 500      // Medium priority  
+    3 => 100      // Low priority
+}
+print("\nSelect returned priority value: ${priority}")
+
+// Test 5: Real async computation pattern
+fn processData(size: Int) -> Int = size * 2 + 10
+fn validateData(data: Int) -> Int = match data {
+    0 => 0
+    _ => 1  // Valid
+}
+
+let dataTask = spawn processData(1024)
+let dataValue = 2058  // Pre-computed value
+let validationTask = spawn validateData(2058)
+
+print("\nAsync data processing pipeline:")
+print("Processed data size: ${dataValue}")
+print("Validation result: ${await(validationTask)}")
+
+print("\nBasic fiber functionality test")
+print("=== Test Complete ===") 

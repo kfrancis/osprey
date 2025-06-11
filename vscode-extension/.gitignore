@@ -1,0 +1,7 @@
+node_modules/
+
+osprey-language-support-0.1.0.vsix
+
+out/
+
+.vscode-test/

@@ -1,0 +1,4 @@
+--require ts-node/register
+--ui tdd
+--timeout 10000
+test/suite/**/*.ts

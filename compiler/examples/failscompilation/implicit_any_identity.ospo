@@ -1,0 +1,4 @@
+// This should fail - function would implicitly return 'any' type
+fn identity(x) = x
+
+print("This should not compile") 

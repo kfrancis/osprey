@@ -1,0 +1,59 @@
+// 🌐 Comprehensive HTTP API Test - All Methods
+// Tests real client-server communication with GET, POST, PUT, DELETE
+
+print("=== Comprehensive HTTP API Test ===")
+
+// Start HTTP server
+print("Creating HTTP server on port 8080...")
+let serverId = httpCreateServer(8080, "127.0.0.1")
+print("Server created with ID: ${serverId}")
+
+print("Starting server listener...")
+let listenResult = httpListen(serverId, 1)
+print("Server listening on http://127.0.0.1:8080")
+
+// Create HTTP client
+print("Creating HTTP client...")
+let clientId = httpCreateClient("http://127.0.0.1:8080", 5000)
+print("Client created with ID: ${clientId}")
+
+// Test all HTTP methods
+print("=== Testing HTTP Methods ===")
+
+// Test GET request
+print("GET /api/users")
+let getResult = httpGet(clientId, "/api/users", "Accept: application/json")
+print("GET status: ${getResult}")
+
+// Test POST request (create)
+print("POST /api/users")
+let postResult = httpPost(clientId, "/api/users", "{\"name\": \"Alice\", \"email\": \"alice@example.com\"}", "Content-Type: application/json")
+print("POST status: ${postResult}")
+
+// Test PUT request (update)
+print("PUT /api/users/1")
+let putResult = httpPut(clientId, "/api/users/1", "{\"name\": \"Alice Updated\", \"email\": \"alice.updated@example.com\"}", "Content-Type: application/json")
+print("PUT status: ${putResult}")
+
+// Test DELETE request
+print("DELETE /api/users/1")
+let deleteResult = httpDelete(clientId, "/api/users/1", "Authorization: Bearer token123")
+print("DELETE status: ${deleteResult}")
+
+// Test additional endpoints
+print("=== Testing Additional Endpoints ===")
+
+print("GET /health")
+let healthResult = httpGet(clientId, "/health", "")
+print("Health check status: ${healthResult}")
+
+print("POST /api/auth/login")
+let loginResult = httpPost(clientId, "/api/auth/login", "{\"username\": \"admin\", \"password\": \"secret\"}", "Content-Type: application/json")
+print("Login status: ${loginResult}")
+
+// Stop server
+print("Stopping server...")
+let stopResult = httpStopServer(serverId)
+print("Server stopped with result: ${stopResult}")
+
+print("=== HTTP API Test Complete ===") 

@@ -1,0 +1,84 @@
+{
+  "name": "Osprey Programming Language Dev Environment",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "target": "development"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=vscode-extensions,target=/root/.vscode-server/extensions,type=volume",
+    "source=go-cache,target=/go/pkg,type=volume",
+    "source=cargo-cache,target=/root/.cargo/registry,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "go.useLanguageServer": true,
+        "go.formatTool": "goimports",
+        "go.lintOnSave": "package",
+        "go.testFlags": [
+          "-v"
+        ],
+        "go.toolsManagement.checkForUpdates": "local",
+        "go.goroot": "/usr/local/go",
+        "go.gopath": "/go",
+        "go.testWorkingDirectory": "${workspaceFolder}/compiler",
+        "go.testExplorer.enable": true,
+        "go.testExplorer.packageDisplayMode": "nested",
+        "go.testExplorer.showDynamicSubtestsInEditor": true,
+        "rust-analyzer.check.command": "clippy",
+        "rust-analyzer.cargo.buildScripts.enable": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit"
+        },
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "git.autofetch": true,
+        "git.confirmSync": false,
+        "testExplorer.useNativeTesting": true,
+        "testExplorer.mergeSuites": true,
+        "testExplorer.showCollapseButton": true,
+        "testExplorer.showExpandButton": true,
+        "testExplorer.showOnRun": true,
+        "mochaExplorer.files": "vscode-extension/test/**/*.test.{js,ts}",
+        "mochaExplorer.env": {},
+        "mochaExplorer.cwd": "${workspaceFolder}/vscode-extension",
+        "jestTestExplorer.rootPath": "webcompiler"
+      },
+      "extensions": [
+        "golang.go",
+        "rust-lang.rust-analyzer",
+        "antlr.antlr4",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-vscode.makefile-tools",
+        "ms-vscode.test-adapter-converter",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-markdown",
+        "streetsidesoftware.code-spell-checker",
+        "ms-vscode.hexeditor",
+        "hbenl.vscode-test-explorer",
+        "hbenl.vscode-jest-test-adapter",
+        "kondratiev.vscode-rust-test-adapter",
+        "premparihar.gotestexplorer"
+      ]
+    }
+  },
+  "workspaceFolder": "/workspace",
+  "remoteUser": "root",
+  "forwardPorts": [
+    3001,
+    8080
+  ],
+  "portsAttributes": {
+    "3001": {
+      "label": "Web Compiler",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Development Server",
+      "onAutoForward": "notify"
+    }
+  }
+}

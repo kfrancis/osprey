@@ -1,0 +1,24 @@
+print("=== Basic Block Statements Test ===")
+
+// Test 1: Simple block returning a value
+let result1 = {
+    42
+}
+print("Test 1 - Simple block: ${result1}")
+
+// Test 2: Block with computation
+let result2 = {
+    let x = 10
+    x * 2
+}
+print("Test 2 - Block computation: ${result2}")
+
+// Test 3: Block with multiple statements
+let result3 = {
+    let a = 5
+    let b = 10
+    a + b
+}
+print("Test 3 - Multiple statements: ${result3}")
+
+print("=== Basic Block Statements Complete ===") 

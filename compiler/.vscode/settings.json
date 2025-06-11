@@ -1,0 +1,30 @@
+{
+    "go.lintOnSave": "off",
+    "go.vetOnSave": "off",
+    "go.formatTool": "gofumpt",
+    "go.toolsManagement.autoUpdate": true,
+    "go.testOnSave": false,
+    "go.testTimeout": "300s",
+    "go.testFlags": [
+        "-v"
+    ],
+    "go.testEnvVars": {},
+    "go.coverOnSave": false,
+    "go.coverageDecorator": {
+        "type": "gutter",
+        "coveredHighlightColor": "rgba(64,128,128,0.5)",
+        "uncoveredHighlightColor": "rgba(128,64,64,0.25)",
+        "coveredGutterStyle": "blockblue",
+        "uncoveredGutterStyle": "blockred"
+    },
+    "gopls": {
+        "ui.diagnostic.staticcheck": true,
+        "formatting.gofumpt": true,
+        "ui.diagnostic.analyses": {
+            "fieldalignment": false,
+            "shadow": true,
+            "unusedparams": true,
+            "unusedwrite": true
+        }
+    }
+}

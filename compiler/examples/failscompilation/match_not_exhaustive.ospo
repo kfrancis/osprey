@@ -1,0 +1,14 @@
+// This should fail compilation: Non-exhaustive match expression
+// Error: match expression is not exhaustive: missing patterns: [Blue]
+
+type Color = Red | Green | Blue
+
+let color = Red
+
+let description = match color {
+    Red => "red color"
+    Green => "green color"
+    // Missing Blue case - should fail exhaustiveness check
+}
+
+print(description) 

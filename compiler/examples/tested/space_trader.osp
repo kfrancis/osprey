@@ -1,0 +1,231 @@
+// 🚀 Space Trading Simulation - Complex Game Example
+// An epic CLI adventure showcasing Osprey's pattern matching and safe arithmetic
+
+print("🌌 Welcome to the Galactic Trade Network! 🌌")
+print("You are Captain Alex, commander of the starship Osprey-7")
+print("Your mission: Build a trading empire across the galaxy!")
+print("")
+
+// Initial ship status and cargo
+let shipFuel = 100
+let credits = 1000
+let cargoSpace = 50
+let cargoUsed = 0
+let reputation = 0
+let planetsVisited = 0
+
+// Market prices and trading system
+fn getResourcePrice(resourceType: int) -> int = match resourceType {
+    1 => 50   // Quantum Crystals
+    2 => 25   // Space Metal
+    3 => 75   // Exotic Spices
+    4 => 100  // Rare Artifacts
+    5 => 30   // Energy Cells
+    _ => 10   // Common Minerals
+}
+
+fn getResourceName(resourceType: int) -> string = match resourceType {
+    1 => "Quantum Crystals"
+    2 => "Space Metal"
+    3 => "Exotic Spices"
+    4 => "Rare Artifacts"
+    5 => "Energy Cells"
+    _ => "Common Minerals"
+}
+
+fn getPlanetName(planetId: int) -> string = match planetId {
+    1 => "Nebula Prime"
+    2 => "Crystal Moon"
+    3 => "Trade Station Alpha"
+    4 => "Asteroid Mining Base"
+    5 => "Galactic Hub"
+    _ => "Unknown Sector"
+}
+
+fn getPlanetSpecialty(planetId: int) -> int = match planetId {
+    1 => 1  // Quantum Crystals
+    2 => 2  // Space Metal
+    3 => 3  // Exotic Spices
+    4 => 4  // Rare Artifacts
+    5 => 5  // Energy Cells
+    _ => 6  // Common Minerals
+}
+
+fn calculateTravelCost(distance: int) -> int = match distance {
+    1 => 10  // Nearby
+    2 => 20  // Medium range
+    3 => 30  // Far
+    4 => 40  // Very far
+    _ => 50  // Deep space
+}
+
+fn getReputationTitle(rep: int) -> string = match rep {
+    0 => "Unknown Trader"
+    1 => "Novice Merchant"
+    2 => "Skilled Trader"
+    3 => "Master Merchant"
+    4 => "Trade Baron"
+    _ => "Galactic Legend"
+}
+
+// Ship and crew management
+fn calculateCargoValue(amount: int, price: int) -> int = amount * price
+
+fn getShipStatus(fuel: int) -> string = match fuel {
+    100 => "Excellent"
+    75 => "Good"
+    50 => "Fair"
+    25 => "Low"
+    _ => "Critical"
+}
+
+// Mission briefing and setup
+print("🛸 MISSION BRIEFING 🛸")
+print("Ship: Osprey-7 Starfreighter")
+print("Fuel: ${shipFuel}% ⛽")
+print("Credits: ${credits} 💰")
+print("Cargo Space: ${cargoUsed}/${cargoSpace} 📦")
+print("Reputation: ${getReputationTitle(reputation)}")
+print("")
+
+// Trading simulation across multiple planets
+print("🌍 GALACTIC TRADING SIMULATION 🌍")
+print("")
+
+// Planet 1: Nebula Prime
+let planet1 = 1
+let planet1Name = getPlanetName(planet1)
+let specialty1 = getPlanetSpecialty(planet1)
+let resource1Name = getResourceName(specialty1)
+let resource1Price = getResourcePrice(specialty1)
+
+print("📍 Arriving at ${planet1Name}")
+print("This planet specializes in: ${resource1Name}")
+print("Market price: ${resource1Price} credits per unit")
+
+let purchaseAmount1 = 10
+let totalCost1 = calculateCargoValue(amount: purchaseAmount1, price: resource1Price)
+let newCredits1 = credits - totalCost1
+let newCargoUsed1 = cargoUsed + purchaseAmount1
+let travelCost1 = calculateTravelCost(2)
+let newFuel1 = shipFuel - travelCost1
+
+print("Purchasing ${purchaseAmount1} units of ${resource1Name}")
+print("Total cost: ${totalCost1} credits")
+print("Remaining credits: ${newCredits1} 💰")
+print("Cargo: ${newCargoUsed1}/${cargoSpace} 📦")
+print("")
+
+// Planet 2: Crystal Moon  
+let planet2 = 2
+let planet2Name = getPlanetName(planet2)
+print("🚀 Traveling to ${planet2Name}...")
+print("Fuel consumed: ${travelCost1}%")
+print("Current fuel: ${newFuel1}% ⛽")
+print("")
+
+let specialty2 = getPlanetSpecialty(planet2)
+let resource2Name = getResourceName(specialty2)
+let resource2Price = getResourcePrice(specialty2)
+
+print("📍 Arrived at ${planet2Name}")
+print("Local specialty: ${resource2Name}")
+print("Market price: ${resource2Price} credits per unit")
+
+// Sell previous cargo at premium
+let sellPrice1 = resource1Price + 25  // 50% markup
+let revenue1 = calculateCargoValue(amount: purchaseAmount1, price: sellPrice1)
+let newCredits2 = newCredits1 + revenue1
+let newCargoUsed2 = newCargoUsed1 - purchaseAmount1
+
+print("Selling ${purchaseAmount1} units of ${resource1Name}")
+print("Sale price: ${sellPrice1} credits per unit")
+print("Revenue: ${revenue1} credits 💰")
+print("New balance: ${newCredits2} credits")
+print("Cargo space freed: ${newCargoUsed2}/${cargoSpace} 📦")
+print("")
+
+// Buy local specialty
+let purchaseAmount2 = 15
+let totalCost2 = calculateCargoValue(amount: purchaseAmount2, price: resource2Price)
+let newCredits3 = newCredits2 - totalCost2
+let newCargoUsed3 = newCargoUsed2 + purchaseAmount2
+
+print("Purchasing ${purchaseAmount2} units of ${resource2Name}")
+print("Cost: ${totalCost2} credits")
+print("Remaining credits: ${newCredits3} 💰")
+print("")
+
+// Planet 3: Trade Station Alpha (Major Hub)
+let planet3 = 3
+let planet3Name = getPlanetName(planet3)
+let travelCost2 = calculateTravelCost(3)
+let newFuel2 = newFuel1 - travelCost2
+
+print("🚀 Long-range jump to ${planet3Name}")
+print("Fuel consumed: ${travelCost2}%")
+print("Current fuel: ${newFuel2}% ⛽")
+print("")
+
+print("📍 Docking at ${planet3Name}")
+print("This is the galaxy's premier trading hub!")
+
+// Major trade at hub
+let sellPrice2 = resource2Price + 30  // Premium for rare goods
+let revenue2 = calculateCargoValue(amount: purchaseAmount2, price: sellPrice2)
+let newCredits4 = newCredits3 + revenue2
+let newCargoUsed4 = newCargoUsed3 - purchaseAmount2
+
+print("Selling ${purchaseAmount2} units of ${resource2Name}")
+print("Hub premium price: ${sellPrice2} credits per unit")
+print("Major revenue: ${revenue2} credits! 💰")
+print("New balance: ${newCredits4} credits")
+print("")
+
+// Calculate profit and reputation
+let totalProfit = newCredits4 - credits
+let newReputation = reputation + 1
+let newPlanetsVisited = planetsVisited + 3
+let newReputationTitle = getReputationTitle(newReputation)
+
+print("📈 TRADING RESULTS 📈")
+print("Starting credits: ${credits}")
+print("Final credits: ${newCredits4}")
+print("Total profit: ${totalProfit} credits! 💰")
+print("Planets visited: ${newPlanetsVisited}")
+print("New reputation: ${newReputationTitle}")
+print("")
+
+// Ship status report
+let finalShipStatus = getShipStatus(newFuel2)
+print("🛸 SHIP STATUS REPORT 🛸")
+print("Fuel level: ${newFuel2}% (${finalShipStatus})")
+print("Cargo bay: ${newCargoUsed4}/${cargoSpace} units")
+print("Ship condition: Operational")
+print("")
+
+// Advanced calculations and projections
+let fuelEfficiency = newFuel2 / newPlanetsVisited
+let profitPerPlanet = totalProfit / newPlanetsVisited
+let projectedWealth = newCredits4 * 2
+
+print("📊 ADVANCED ANALYTICS 📊")
+print("Fuel efficiency: ${fuelEfficiency}% per planet")
+print("Profit per planet: ${profitPerPlanet} credits")
+print("Projected wealth (if doubled): ${projectedWealth} credits")
+print("")
+
+// Mission completion and next steps
+print("🏆 MISSION COMPLETE! 🏆")
+print("Congratulations, Captain ${newReputationTitle}!")
+print("You have successfully established trade routes across the galaxy!")
+print("")
+print("Next objectives:")
+print("  ⭐ Explore more distant sectors")
+print("  ⭐ Upgrade ship cargo capacity")
+print("  ⭐ Establish permanent trade agreements")
+print("  ⭐ Recruit specialized crew members")
+print("")
+print("🌟 Your trading empire awaits! 🌟")
+print("End of Galactic Trade Simulation")
+print("Thank you for playing Osprey Space Trader!") 

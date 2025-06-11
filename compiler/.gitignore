@@ -1,0 +1,112 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+.DS_Store
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE and editor files
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build artifacts
+build/
+target/
+
+# ANTLR generated files (uncomment if you want to ignore generated parser files)
+# parser/*.go
+# parser/*.tokens
+# parser/*.interp
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Debug files
+debug
+*.pdb
+
+# Backup files
+*.bak
+*.backup
+
+# Compiler outputs
+outputs/
+examples/hello
+examples/structured
+examples/script_style
+
+# LLVM temporary files
+*.ll
+*.o
+*.bc
+
+# Rust integration artifacts
+examples/rust_integration/rust_math.ll
+examples/rust_integration/osprey_demo.ll
+examples/rust_integration/osprey_output.ll
+examples/rust_integration/minimal_osprey.ll
+examples/rust_integration/merged_demo.ll
+examples/rust_integration/merged_simple.ll
+examples/rust_integration/minimal_merged.ll
+examples/rust_integration/rust_actual.ll
+examples/rust_integration/*.s
+examples/rust_integration/rust_osprey_demo
+examples/rust_integration/simple_rust_osprey_demo
+examples/rust_integration/minimal_rust_osprey_demo
+
+# Debug and temporary osprey files
+debug_*.osp
+test_*.osp
+temp_*.osp
+*.tmp.osp
+
+# Compiled osprey programs (no extension)
+**/osprey_temp
+
+coverage.html
+coverage_report.out
+
+# Compiled osprey binary (executable)
+/osprey
+/bin/osprey
+
+node_modules/
+
+bin/
+bin

@@ -1,0 +1,208 @@
+{
+  "name": "osprey-language-support",
+  "displayName": "Osprey Language Support",
+  "description": "Syntax highlighting and language server for Osprey programming language",
+  "version": "0.1.0",
+  "publisher": "christianfindlay",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/osprey/osprey.git"
+  },
+  "engines": {
+    "vscode": "^1.96.0",
+    "node": "20.19.2"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": [
+    "osprey",
+    "functional",
+    "programming",
+    "language"
+  ],
+  "main": "./out/client/src/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "osprey",
+        "aliases": [
+          "Osprey",
+          "osprey",
+          "Osprey Language",
+          "osp"
+        ],
+        "extensions": [
+          ".osp"
+        ],
+        "filenames": [],
+        "filenamePatterns": [
+          "*.osp"
+        ],
+        "firstLine": "^//.*[Oo]sprey.*",
+        "configuration": "./language-configuration/language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "osprey",
+        "scopeName": "source.osprey",
+        "path": "./syntaxes/osprey.tmGrammar.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "osprey.compile",
+        "title": "Compile Osprey File",
+        "category": "Osprey"
+      },
+      {
+        "command": "osprey.run",
+        "title": "Compile and Run Osprey File",
+        "category": "Osprey"
+      },
+      {
+        "command": "osprey.setLanguage",
+        "title": "Set Language to Osprey",
+        "category": "Osprey"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == osprey",
+          "command": "osprey.compile",
+          "group": "navigation@1"
+        },
+        {
+          "when": "resourceLangId == osprey",
+          "command": "osprey.run",
+          "group": "navigation@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "osprey.compile",
+          "when": "resourceLangId == osprey"
+        },
+        {
+          "command": "osprey.run",
+          "when": "resourceLangId == osprey"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "osprey.compile",
+        "key": "ctrl+shift+b",
+        "mac": "cmd+shift+b",
+        "when": "resourceLangId == osprey"
+      },
+      {
+        "command": "osprey.run",
+        "key": "f5",
+        "when": "resourceLangId == osprey"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "osprey",
+        "label": "Osprey",
+        "languages": [
+          "osprey"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Absolute path to an Osprey file.",
+                "default": "${file}"
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "osprey",
+            "request": "launch",
+            "name": "Run Osprey File",
+            "program": "${file}"
+          }
+        ]
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Osprey Language Server",
+      "properties": {
+        "osprey.server.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the Osprey language server"
+        },
+        "osprey.server.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Osprey compiler (if not in PATH)"
+        },
+        "osprey.diagnostics.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable diagnostic messages"
+        },
+        "osprey.server.compilerPath": {
+          "type": "string",
+          "default": "osprey",
+          "description": "Path to the Osprey compiler executable"
+        }
+      }
+    }
+  },
+  "activationEvents": [
+    "onLanguage:osprey",
+    "onCommand:osprey.compile",
+    "onCommand:osprey.run",
+    "onCommand:osprey.setLanguage"
+  ],
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.17.50",
+    "@types/sinon": "^17.0.4",
+    "@types/vscode": "^1.96.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^3.4.2",
+    "mocha": "^11.5.0",
+    "sinon": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "preinstall": "node -e \"if(process.version !== 'v20.19.2') { console.error('ERROR: This project requires Node.js v20.19.2 exactly. Current version: ' + process.version); process.exit(1); }\"",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "package": "vsce package",
+    "install-extension": "code --install-extension osprey-language-support-0.1.0.vsix",
+    "test": "vscode-test",
+    "test-compile": "tsc -p ./",
+    "pretest": "npm run test-compile && npm run compile",
+    "test:watch": "npm run watch",
+    "test:debug": "node scripts/test-launcher.js test:debug",
+    "test:launcher": "node scripts/test-launcher.js"
+  }
+}

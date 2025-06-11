@@ -1,0 +1,101 @@
+name: "Setup Osprey Compiler"
+description: "Sets up Go, Rust, LLVM, and builds the Osprey compiler"
+inputs:
+  go-version:
+    description: "Go version to use"
+    required: false
+    default: "1.23.4"
+  rust-toolchain:
+    description: "Rust toolchain to use"
+    required: false
+    default: "stable"
+
+outputs:
+  compiler-path:
+    description: "Path to the built Osprey compiler binary"
+    value: ${{ steps.build-compiler.outputs.compiler-path }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ inputs.rust-toolchain }}
+        profile: minimal
+        override: true
+        components: rustfmt, clippy
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('compiler/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Cache Rust dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          compiler/examples/rust_integration/target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('compiler/examples/rust_integration/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: Install LLVM
+      shell: bash
+      run: |
+        echo "📦 Installing LLVM tools..."
+        sudo apt-get update
+        sudo apt-get install -y llvm-14 clang-14
+        # Create symlinks for the tools
+        sudo ln -sf /usr/bin/llc-14 /usr/bin/llc
+        sudo ln -sf /usr/bin/opt-14 /usr/bin/opt
+        sudo ln -sf /usr/bin/lli-14 /usr/bin/lli
+        sudo ln -sf /usr/bin/clang-14 /usr/bin/clang
+        echo "✅ LLVM tools installed"
+        llc --version
+        clang --version
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ./compiler
+      run: make install-deps
+
+    - name: Build Rust library
+      shell: bash
+      working-directory: ./compiler/examples/rust_integration
+      run: |
+        echo "🦀 Building Rust library..."
+        cargo build --release
+        echo "✅ Rust library built successfully"
+
+    - name: Build fiber runtime library
+      shell: bash
+      working-directory: ./compiler
+      run: |
+        echo "🔨 Building fiber runtime library..."
+        make fiber-runtime
+        echo "✅ Fiber runtime library built successfully"
+
+    - name: Build Osprey compiler
+      id: build-compiler
+      shell: bash
+      working-directory: ./compiler
+      run: |
+        echo "🔧 Building Osprey compiler..."
+        make build
+        echo "✅ Osprey compiler built successfully"
+        echo "compiler-path=./compiler/bin/osprey" >> $GITHUB_OUTPUT

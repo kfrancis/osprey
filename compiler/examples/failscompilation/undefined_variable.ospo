@@ -1,0 +1,6 @@
+// This should fail compilation: Undefined variable
+// Error: undefined variable 'unknownVar'
+
+let x = 42
+let result = x + unknownVar  // unknownVar is not defined
+print(result) 
