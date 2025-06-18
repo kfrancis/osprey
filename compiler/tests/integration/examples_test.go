@@ -212,6 +212,18 @@ func getExpectedOutputs() map[string]string {
 			"❌ Invalid Product - zero price (should return -1):\n-1\n=== WHERE CONSTRAINT VALIDATION COMPLETE ===\n",
 		"proper_validation_test.osp": "Testing validation functions:\nfalse\ntrue\nfalse\ntrue\ntrue\nfalse\n",
 		"match_type_mismatch.osp":    "none\n",
+		// Website examples
+		"website_hero_example.osp": "x = 42\nname = Alice\nResult: The answer!\n",
+		"website_type_safe_example.osp": "Testing functions:\nZero\nThe answer!\nSomething else\n" +
+			"5 doubled is 10\n10 squared is 100\n",
+		"website_string_interpolation_example.osp": "Hello Alice!\nNext year you'll be 26\n" +
+			"Double score: 190\nAlice (25) scored 95/100\n",
+		"website_pattern_matching_grade_example.osp": "Grade for 100: Perfect!\nGrade for 95: Excellent\n" +
+			"Grade for 85: Very Good\nGrade for 75: Good\nGrade for 50: Needs Improvement\n",
+		"website_functional_programming_example.osp": "100\nRange operations:\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+		// TODO: REMOVED BULLSHIT "safe arithmetic" example - was just manual checking, not actually safe!
+		"website_fiber_isolation_example.osp": "Fiber 1 result: 1\nFiber 2 result: 2\n" +
+			"Processed 10 items\n=== Fiber Example Complete ===\n",
 		// Block statement examples
 		"block_statements_basic.osp": "=== Basic Block Statements Test ===\n" +
 			"Test 1 - Simple block: 0\n" +
