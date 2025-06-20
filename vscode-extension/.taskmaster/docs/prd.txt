@@ -1,0 +1,64 @@
+# Osprey VS Code Extension - Product Requirements Document
+
+## Overview
+The Osprey VS Code Extension enables developers to write, edit, and execute Osprey programming language code within Visual Studio Code. Osprey is a new functional programming language with a focus on clarity, safety, and performance.
+
+## Goals
+1. Provide a fully functional development environment for Osprey programming in VS Code
+2. Implement comprehensive language features through the Language Server Protocol (LSP)
+3. Integrate with TaskMaster to help developers manage Osprey project development
+4. Implement a simple but functional compiler/interpreter for Osprey
+
+## Key Features
+
+### 1. Basic Language Support
+- Syntax highlighting for Osprey (.osp) files
+- Auto-indentation and bracket matching
+- Comment toggling
+- Code folding
+
+### 2. Language Server Features
+- Error diagnostics with clear error messages
+- Code completion for keywords and built-in functions
+- Hover information for symbols
+- Symbol definitions and references
+- Document outline/structure
+
+### 3. Compiler Integration
+- Command to compile Osprey files
+- Command to run compiled Osprey programs
+- Error reporting in the Problems panel
+
+### 4. TaskMaster Integration
+- TaskMaster tasks for common Osprey actions
+- Project templates for Osprey applications
+- Build tasks for Osprey projects
+
+### 5. Development Tools
+- Embedded Osprey compiler/interpreter
+- Configuration options for compiler settings
+- Debug capabilities
+
+## Technical Requirements
+1. The extension should work without requiring a separate installation of the Osprey compiler
+2. Changes to Osprey files should trigger compilation in the background for quick feedback
+3. The extension should provide detailed diagnostic information for syntax and semantic errors
+4. Performance should be optimized for large Osprey files and projects
+
+## Dependencies
+- VS Code Extensions API
+- Language Server Protocol
+- Node.js for the extension runtime
+- A simplified Osprey compiler/interpreter (to be bundled with the extension)
+
+## Out of Scope
+- Full-featured Osprey language implementation
+- Debugging with breakpoints and variable inspection (future enhancement)
+- Refactoring tools (future enhancement)
+- Project scaffolding (future enhancement)
+
+## Success Criteria
+1. Users can write, compile, and run Osprey programs entirely within VS Code
+2. The extension provides immediate feedback on syntax and semantic errors
+3. Basic language features (completion, hover, go-to-definition) work reliably
+4. TaskMaster integration helps users manage Osprey development tasks

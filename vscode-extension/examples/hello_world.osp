@@ -1,0 +1,40 @@
+// Hello world example in Osprey
+
+// Import standard library modules
+import std::io
+import std::math
+
+// Define a simple function to calculate the square of a number
+fn square(x: Int) -> Int = x * x
+
+// A function that takes a name and returns a greeting
+fn greet(name: String) -> String = "Hello, " + name + "!"
+
+// Example of pattern matching
+fn describe_number(n: Int) -> String = match n {
+  0 => "zero"
+  1 => "one"
+  2 => "two"
+  _ => "many"
+}
+
+// Main function - entry point of the program
+fn main() -> Unit = {
+  // Print a welcome message
+  print("Welcome to Osprey!")
+  
+  // Calculate and print the square of 5
+  let result = square(5)
+  print("The square of 5 is: " + result.toString())
+  
+  // Demonstrate the greeting function
+  let greeting = greet("World")
+  print(greeting)
+  
+  // Demonstrate pattern matching
+  print("0 is " + describe_number(0))
+  print("3 is " + describe_number(3))
+  
+  // Return unit (void)
+  ()
+}

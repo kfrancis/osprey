@@ -1,0 +1,95 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "New Osprey Project",
+      "type": "shell",
+      "command": "mkdir -p src bin tests",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "windows": {
+        "command": "if not exist src mkdir src && if not exist bin mkdir bin && if not exist tests mkdir tests"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "New Osprey File",
+      "type": "shell",
+      "command": "echo '// New Osprey file\n// Created: $(date)\n\nfn main() = {\n  print(\"Hello, Osprey!\")\n}' > ${input:fileName}.osp",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "windows": {
+        "command": "powershell -Command \"'// New Osprey file`n// Created: $(Get-Date)`n`nfn main() = {`n  print(\"Hello, Osprey!\")`n}' | Out-File -Encoding UTF8 ${input:fileName}.osp\""
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Compile Osprey File",
+      "type": "shell",
+      "command": "${config:osprey.server.compilerPath}",
+      "args": [
+        "${file}"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Osprey File",
+      "type": "shell",
+      "command": "${config:osprey.server.compilerPath}",
+      "args": [
+        "${file}",
+        "--run"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Osprey Tests",
+      "type": "shell",
+      "command": "${config:osprey.server.compilerPath}",
+      "args": [
+        "test",
+        "${workspaceFolder}/tests"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "fileName",
+      "description": "Name for the new Osprey file (without .osp extension)",
+      "default": "main",
+      "type": "promptString"
+    }
+  ]
+}

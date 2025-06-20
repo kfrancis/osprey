@@ -1,0 +1,40 @@
+// Cross-platform Osprey test file
+
+// Basic function declarations
+fn add(a, b) = a + b
+
+fn multiply(a, b) = a * b
+
+// String operations that work on all platforms
+fn greet(name) = "Hello, " + name + "!"
+
+// File path handling example (platform-agnostic)
+fn join_path(segments) = 
+  match segments {
+    [] => ""
+    [head] => head
+    [head, ...tail] => head + "/" + join_path(tail)
+  }
+
+// Platform detection (hypothetical)
+fn get_platform() = 
+  extern "sys.platform" []
+
+// Main function
+fn main() = {
+  // Cross-platform hello world
+  print("Hello from Osprey!")
+  
+  // Test basic functions
+  print("2 + 3 = " + str(add(2, 3)))
+  print("4 * 5 = " + str(multiply(4, 5)))
+  
+  // Test string operations
+  print(greet("World"))
+  
+  // Test path joining
+  print("Path: " + join_path(["home", "user", "documents"]))
+  
+  // Return success
+  "Success!"
+}

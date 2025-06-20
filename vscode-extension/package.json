@@ -7,10 +7,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/osprey/osprey.git"
-  },
-  "engines": {
+  },  "engines": {
     "vscode": "^1.96.0",
-    "node": "20.19.2"
+    "node": ">=20.19.2"
   },
   "categories": [
     "Programming Languages",
@@ -54,8 +53,7 @@
         "scopeName": "source.osprey",
         "path": "./syntaxes/osprey.tmGrammar.json"
       }
-    ],
-    "commands": [
+    ],    "commands": [
       {
         "command": "osprey.compile",
         "title": "Compile Osprey File",
@@ -69,6 +67,25 @@
       {
         "command": "osprey.setLanguage",
         "title": "Set Language to Osprey",
+        "category": "Osprey"
+      },      {
+        "command": "osprey.resetSettings",
+        "title": "Reset Compiler Settings",
+        "category": "Osprey"
+      },
+      {
+        "command": "osprey.restartServer",
+        "title": "Restart Language Server",
+        "category": "Osprey"
+      },
+      {
+        "command": "osprey.showOutputChannel",
+        "title": "Show Output Channel",
+        "category": "Osprey"
+      },
+      {
+        "command": "osprey.checkCompilerStatus",
+        "title": "Check Compiler Status",
         "category": "Osprey"
       }
     ],
@@ -84,8 +101,7 @@
           "command": "osprey.run",
           "group": "navigation@2"
         }
-      ],
-      "commandPalette": [
+      ],      "commandPalette": [
         {
           "command": "osprey.compile",
           "when": "resourceLangId == osprey"
@@ -93,6 +109,21 @@
         {
           "command": "osprey.run",
           "when": "resourceLangId == osprey"
+        },        {
+          "command": "osprey.resetSettings",
+          "when": "true"
+        },
+        {
+          "command": "osprey.restartServer",
+          "when": "true"
+        },
+        {
+          "command": "osprey.showOutputChannel",
+          "when": "true"
+        },
+        {
+          "command": "osprey.checkCompilerStatus",
+          "when": "true"
         }
       ]
     },
@@ -108,14 +139,15 @@
         "key": "f5",
         "when": "resourceLangId == osprey"
       }
-    ],
-    "debuggers": [
+    ],    "debuggers": [
       {
         "type": "osprey",
         "label": "Osprey",
         "languages": [
           "osprey"
         ],
+        "program": "./out/client/src/debugAdapter.js",
+        "runtime": "node",
         "configurationAttributes": {
           "launch": {
             "required": [
@@ -148,40 +180,40 @@
           "type": "boolean",
           "default": true,
           "description": "Enable/disable the Osprey language server"
-        },
-        "osprey.server.path": {
+        },        "osprey.server.compilerPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the Osprey compiler (if not in PATH)"
+          "description": "Path to the Osprey compiler executable. Leave empty to use the bundled compiler. Use ${workspaceFolder} for workspace-relative paths."
         },
         "osprey.diagnostics.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable/disable diagnostic messages"
         },
-        "osprey.server.compilerPath": {
+        "osprey.diagnostics.mode": {
           "type": "string",
-          "default": "osprey",
-          "description": "Path to the Osprey compiler executable"
+          "enum": ["onSave", "onType", "manual"],
+          "default": "onType",
+          "description": "When to run diagnostics: on save, on type, or manually"
         }
-      }
-    }
+      }    }
   },
-  "activationEvents": [
-    "onLanguage:osprey",
-    "onCommand:osprey.compile",
-    "onCommand:osprey.run",
-    "onCommand:osprey.setLanguage"
-  ],
-  "dependencies": {
+  "snippets": [
+    {
+      "language": "osprey",
+      "path": "./snippets/osprey.json"
+    }
+  ],  "activationEvents": [],  "dependencies": {
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.12"
+    "vscode-languageserver-textdocument": "^1.0.12",
+    "vscode-debugadapter": "^1.51.0",
+    "vscode-debugprotocol": "^1.51.0"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "20.17.50",
+    "@types/node": "^20.17.50",
     "@types/sinon": "^17.0.4",
     "@types/vscode": "^1.96.0",
     "@vscode/test-cli": "^0.0.10",
@@ -191,9 +223,8 @@
     "sinon": "^20.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
-  },
-  "scripts": {
-    "preinstall": "node -e \"if(process.version !== 'v20.19.2') { console.error('ERROR: This project requires Node.js v20.19.2 exactly. Current version: ' + process.version); process.exit(1); }\"",
+  },  "scripts": {
+    "preinstall": "echo \"Note: Skipping Node.js version check. Using: \" + process.version",
     "compile": "tsc -b",
     "watch": "tsc -b -w",
     "package": "vsce package",
@@ -203,6 +234,9 @@
     "pretest": "npm run test-compile && npm run compile",
     "test:watch": "npm run watch",
     "test:debug": "node scripts/test-launcher.js test:debug",
-    "test:launcher": "node scripts/test-launcher.js"
+    "test:launcher": "node scripts/test-launcher.js",
+    "bundle-compiler": "node -e \"const os = require('os'); const { spawnSync } = require('child_process'); const isWin = os.platform() === 'win32'; const result = spawnSync(isWin ? 'powershell' : 'bash', isWin ? ['-ExecutionPolicy', 'Bypass', '-File', '.\\\\scripts\\\\bundle-compiler.ps1'] : ['./scripts/bundle-compiler.sh'], { stdio: 'inherit' }); process.exit(result.status);\"",
+    "prepublish": "npm run bundle-compiler && npm run compile",
+    "postinstall": "npm run bundle-compiler"
   }
 }

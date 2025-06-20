@@ -205,8 +205,42 @@ interface OspreySettings {
   enableDiagnostics: boolean;
 }
 
+// Try to find the bundled compiler
+function findBundledCompiler(): string {
+  try {
+    // First, look in the parent directory of the server
+    const serverDir = __dirname;
+    const extensionDir = path.resolve(serverDir, '..', '..', '..');
+    
+    connection.console.log(`🔍 Looking for bundled compiler in: ${extensionDir}`);
+    
+    // Check for different compiler options based on platform
+    const possiblePaths = [
+      path.join(extensionDir, 'bin', 'osprey.cmd'),
+      path.join(extensionDir, 'bin', 'osprey.exe'),
+      path.join(extensionDir, 'bin', 'osprey'),
+      path.join(extensionDir, 'bin', 'osprey.js')
+    ];
+    
+    for (const compilerPath of possiblePaths) {
+      if (fs.existsSync(compilerPath)) {
+        connection.console.log(`✅ Found bundled compiler at: ${compilerPath}`);
+        return compilerPath;
+      }
+    }
+    
+    connection.console.log('❌ No bundled compiler found, falling back to "osprey" command');
+    return 'osprey';
+  } catch (error) {
+    connection.console.error(`❌ Error finding bundled compiler: ${error}`);
+    return 'osprey';
+  }
+}
+
+const bundledCompilerPath = findBundledCompiler();
+
 const defaultSettings: OspreySettings = {
-  compilerPath: 'osprey',
+  compilerPath: bundledCompilerPath,
   enableDiagnostics: true
 };
 
@@ -234,13 +268,21 @@ function getDocumentSettings(resource: string): Promise<OspreySettings> {
     return Promise.resolve(globalSettings);
   }
   let result = documentSettings.get(resource);
-  if (!result) {
-    result = connection.workspace.getConfiguration({
+  if (!result) {    result = connection.workspace.getConfiguration({
       scopeUri: resource,
       section: 'osprey'
     }).then((config: any) => {
+      // If a compiler path is specified in the config, use it
+      // Otherwise, fall back to our discovered bundled compiler path
+      const configuredPath = config.server?.compilerPath || config.server?.path;
+      const finalCompilerPath = (configuredPath && configuredPath.trim() !== '') 
+        ? configuredPath 
+        : bundledCompilerPath;
+        
+      connection.console.log(`🔧 Using compiler path: ${finalCompilerPath}`);
+      
       return {
-        compilerPath: config.server?.compilerPath || config.server?.path || 'osprey',
+        compilerPath: finalCompilerPath,
         enableDiagnostics: config.diagnostics?.enabled !== false
       };
     });
@@ -1332,8 +1374,192 @@ connection.onReferences((params) => {
   return references;
 });
 
+// FOLDING RANGE SUPPORT
+connection.onFoldingRanges((params) => {
+  connection.console.log(`📂 Folding ranges request for ${params.textDocument.uri}`);
+  
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    connection.console.log(`❌ Document not found: ${params.textDocument.uri}`);
+    return null;
+  }
+  
+  const text = document.getText();
+  const lines = text.split('\n');
+  
+  const foldingRanges = [];
+  const openBrackets = []; // Stack to track opening brackets
+  const regionComments = []; // Stack to track region comments
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Check for block comments
+    if (line.trim().startsWith('/*') && !line.includes('*/')) {
+      const startLine = i;
+      // Find the end of the comment block
+      let endLine = i;
+      while (endLine < lines.length && !lines[endLine].includes('*/')) {
+        endLine++;
+      }
+      
+      if (endLine < lines.length) {
+        foldingRanges.push({
+          startLine,
+          endLine,
+          kind: 'comment'
+        });
+        i = endLine; // Skip to the end of the comment block
+      }
+    }
+    
+    // Check for function and block definitions (based on curly braces)
+    const openCurlyIndex = line.indexOf('{');
+    const closeCurlyIndex = line.lastIndexOf('}');
+    
+    if (openCurlyIndex !== -1) {
+      openBrackets.push({ line: i, char: openCurlyIndex });
+    }
+    
+    if (closeCurlyIndex !== -1 && openBrackets.length > 0) {
+      const openBracket = openBrackets.pop();
+      // Only create folding range if blocks span multiple lines
+      if (openBracket && openBracket.line !== i) {
+        foldingRanges.push({
+          startLine: openBracket.line,
+          endLine: i,
+          kind: 'region'
+        });
+      }
+    }
+    
+    // Check for imports region
+    if (line.trim().startsWith('import ')) {
+      let importStart = i;
+      while (i + 1 < lines.length && 
+             (lines[i + 1].trim().startsWith('import ') || lines[i + 1].trim() === '')) {
+        i++;
+      }
+      
+      if (i > importStart) {
+        foldingRanges.push({
+          startLine: importStart,
+          endLine: i,
+          kind: 'imports'
+        });
+      }
+    }
+  }
+  
+  connection.console.log(`📂 Found ${foldingRanges.length} folding ranges`);
+  return foldingRanges;
+});
+
+// CODE ACTIONS SUPPORT
+connection.onCodeAction(async (params) => {
+  connection.console.log(`🛠️ Code action request for ${params.textDocument.uri}`);
+  
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    connection.console.log(`❌ Document not found: ${params.textDocument.uri}`);
+    return null;
+  }
+  
+  const text = document.getText();
+  const diagnostics = params.context.diagnostics;
+  const codeActions = [];
+  
+  // Add quick fix for common errors
+  for (const diagnostic of diagnostics) {
+    // Check if this is an import-related error (assuming error messages contain these patterns)
+    if (diagnostic.message?.toLowerCase().includes('cannot find') || 
+        diagnostic.message?.toLowerCase().includes('undefined') ||
+        diagnostic.message?.toLowerCase().includes('not found')) {
+      
+      connection.console.log(`🔧 Creating import fix for diagnostic: ${diagnostic.message}`);
+      
+      // Generate code action for this diagnostic
+      codeActions.push({
+        title: `Fix missing import`,
+        kind: CodeActionKind.QuickFix,
+        diagnostics: [diagnostic],
+        edit: {
+          changes: {
+            [params.textDocument.uri]: [
+              {
+                range: diagnostic.range,
+                newText:                diagnostic.message?.toLowerCase().includes('module') ? 
+                  `import std::core\n` :  // Add standard library import
+                  document.getText(diagnostic.range) // Use the text at the diagnostic range
+              }
+            ]
+          }
+        }
+      });
+    }
+  }
+  
+  // Add refactoring action if a function is selected
+  const functionMatch = /fn\s+(\w+)/g;
+  let match;
+  let lineNumber = 0;
+  const lines = text.split('\n');
+  
+  for (const line of lines) {
+    if ((match = functionMatch.exec(line)) !== null) {
+      const fnName = match[1];
+      const startChar = line.indexOf(fnName);
+      const endChar = startChar + fnName.length;
+      
+      // Check if function name is within the selection
+      const isInRange = params.range && 
+        ((lineNumber === params.range.start.line && startChar <= params.range.start.character && endChar >= params.range.start.character) ||
+         (lineNumber === params.range.end.line && startChar <= params.range.end.character && endChar >= params.range.end.character));
+      
+      if (isInRange) {
+        connection.console.log(`🔧 Creating refactoring action for function: ${fnName}`);
+        
+        // Add refactoring action
+        codeActions.push({
+          title: `Extract function ${fnName} to new file`,
+          kind: CodeActionKind.RefactorExtract,
+          edit: {
+            changes: {
+              // We can't actually create files from the language server,
+              // but we could communicate this intention to the client
+              [params.textDocument.uri]: [
+                {
+                  range: {
+                    start: { line: lineNumber, character: 0 },
+                    end: { line: lineNumber + 1, character: 0 }
+                  },
+                  newText: `// TODO: Extract function ${fnName} to new file\n${line}\n`
+                }
+              ]
+            }
+          }
+        });
+      }
+    }
+    lineNumber++;
+  }
+  
+  // Add organize imports action
+  if (text.includes('import')) {
+    connection.console.log('🔧 Creating organize imports action');
+    codeActions.push({
+      title: 'Organize Imports',
+      kind: CodeActionKind.SourceOrganizeImports,
+      // This would require client-side implementation
+    });
+  }
+  
+  connection.console.log(`✅ Returning ${codeActions.length} code actions`);
+  return codeActions;
+});
+
 // Make the text document manager listen on the connection
 documents.listen(connection);
 
 // Listen on the connection
-connection.listen(); 
+connection.listen();

@@ -1,0 +1,10 @@
+// Simple test file for Osprey compiler
+
+// Import standard library
+import std::io
+
+// Main function
+fn main() -> Int {
+  print("Hello from test.osp!")
+  return 0
+}

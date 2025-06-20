@@ -1,0 +1,107 @@
+{
+  "Main Function": {
+    "prefix": "main",
+    "body": [
+      "fn main() = {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a main function"
+  },
+  "Function Definition": {
+    "prefix": "fn",
+    "body": [
+      "fn ${1:name}(${2:params}) -> ${3:return_type} = {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a function with parameters and return type"
+  },
+  "Simple Function": {
+    "prefix": "sfn",
+    "body": [
+      "fn ${1:name}(${2:params}) = ${3:expression}"
+    ],
+    "description": "Create a simple expression function"
+  },
+  "Let Binding": {
+    "prefix": "let",
+    "body": [
+      "let ${1:name} = ${2:value}"
+    ],
+    "description": "Create a let binding"
+  },
+  "Mutable Binding": {
+    "prefix": "mut",
+    "body": [
+      "mut ${1:name} = ${2:value}"
+    ],
+    "description": "Create a mutable binding"
+  },
+  "Type Definition": {
+    "prefix": "type",
+    "body": [
+      "type ${1:Name} = {",
+      "\t${2:field1}: ${3:Type1}",
+      "\t${4:field2}: ${5:Type2}",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a type definition"
+  },
+  "Import Module": {
+    "prefix": "import",
+    "body": [
+      "import ${1:module}::${2:submodule}"
+    ],
+    "description": "Import a module"
+  },
+  "Match Expression": {
+    "prefix": "match",
+    "body": [
+      "match ${1:value} {",
+      "\t${2:pattern1} => ${3:expression1}",
+      "\t${4:pattern2} => ${5:expression2}",
+      "\t_ => ${6:default_expression}",
+      "}"
+    ],
+    "description": "Create a match expression"
+  },
+  "If Expression": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition} {",
+      "\t${2:expression}",
+      "} else {",
+      "\t${3:else_expression}",
+      "}"
+    ],
+    "description": "Create an if-else expression"
+  },
+  "Loop": {
+    "prefix": "loop",
+    "body": [
+      "loop {",
+      "\t${1:// loop body}",
+      "\tif ${2:condition} break",
+      "}"
+    ],
+    "description": "Create a loop expression"
+  },
+  "For Each": {
+    "prefix": "foreach",
+    "body": [
+      "${1:collection} |> forEach(${2:item} => {",
+      "\t$0",
+      "})"
+    ],
+    "description": "Create a forEach loop with a collection"
+  },
+  "Print Statement": {
+    "prefix": "print",
+    "body": [
+      "print(${1:\"Hello, world!\"})"
+    ],
+    "description": "Print to standard output"
+  }
+}
